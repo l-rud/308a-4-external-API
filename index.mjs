@@ -12,15 +12,20 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = 
-// Here is supposed to be my key 
+"Here is supposed to be my key";
 
-axios("https://api.thecatapi.com/v1/images/search")
-  .then((x) => {
-    console.log(x);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// Headers for request
+const headers = new Headers({
+  "Content-Type": "application/json",
+  "x-api-key": API_KEY
+});
+
+// Request options
+const requestOptions = {
+  method: 'GET',
+  headers: headers,
+  redirect: 'follow'
+};
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -30,6 +35,22 @@ axios("https://api.thecatapi.com/v1/images/search")
  *  - Each option should display text equal to the name of the breed.
  * This function should execute immediately.
  */
+
+async function initialLoad() {
+  fetch("https://api.thecatapi.com/v1/breeds", requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    const breeds = JSON.parse(result);
+    breeds.forEach((breed) => {
+      breedSelect.options.add(new Option(breed['name'], breed['id']));
+    });
+  })
+  .catch(error => console.log('error', error));
+}
+
+initialLoad();
+
+
 
 /**
  * 2. Create an event handler for breedSelect that does the following:
