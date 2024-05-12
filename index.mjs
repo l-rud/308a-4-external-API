@@ -46,6 +46,35 @@ async function initialLoad() {
     });
   })
   .catch(error => console.log('error', error));
+
+  // 2. Create an event handler for breedSelect
+  breedSelect.addEventListener("change", function(event) {
+    const breed = event.target.value;
+
+    // Retrieve information on the selected breed from the cat API using fetch().
+    fetch("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      // Make sure your request is receiving multiple array items!
+      const descriptions = JSON.parse(result);
+      
+      Carousel.clear();
+
+      descriptions.forEach((imageDescription) => {
+        // For each object in the response array, create a new element for the carousel.
+        const carouselElement = Carousel.createCarouselItem(
+          imageDescription.url,
+          '',
+          imageDescription.id
+        );
+  
+        // Append each of these new elements to the carousel
+        Carousel.appendCarousel(carouselElement);
+      });
+      Carousel.start();
+    })
+    .catch(error => console.log('error', error));
+  });
 }
 
 initialLoad();
