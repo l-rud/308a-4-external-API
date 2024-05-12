@@ -37,10 +37,14 @@ const requestOptions = {
  */
 
 async function initialLoad() {
-  fetch("https://api.thecatapi.com/v1/breeds", requestOptions)
-  .then(response => response.text())
-  .then(result => {
-    const breeds = JSON.parse(result);
+  // version that uses fetch
+  // fetch("https://api.thecatapi.com/v1/breeds", requestOptions)
+  // .then(response => response.text())
+  // .then(result => {
+  //     const breeds = JSON.parse(result); 
+  axios("https://api.thecatapi.com/v1/breeds", requestOptions)
+    .then(response => response.data)
+    .then(breeds => {
     breeds.forEach((breed) => {
       breedSelect.options.add(new Option(breed['name'], breed['id']));
     });
@@ -52,12 +56,16 @@ async function initialLoad() {
     const breed = event.target.value;
 
     // Retrieve information on the selected breed from the cat API using fetch().
-    fetch("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
-    .then(response => response.text())
-    .then(result => {
+    // version that uses fetch
+    // fetch("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
+    // .then(response => response.text())
+    // .then(result => {
+    //       const descriptions = JSON.parse(result);
+    axios("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
+    .then(response => response.data)
+    .then(descriptions => {    
       // Make sure your request is receiving multiple array items!
-      const descriptions = JSON.parse(result);
-      
+
       Carousel.clear();
 
       descriptions.forEach((imageDescription) => {
