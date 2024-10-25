@@ -11,7 +11,10 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-import { API_KEY } from "./config.mjs";
+
+//import { API_KEY } from "./config.mjs";
+
+const API_KEY = "";
 
 // Headers for request
 const headers = new Headers({
