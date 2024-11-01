@@ -29,15 +29,33 @@ const requestOptions = {
   redirect: 'follow'
 };
 
+function updateProgress(progressEvent) {
+  console.log(progressEvent);
+
+  // Calculate the percentage of completion
+  const total = progressEvent.total;
+  const loaded = progressEvent.loaded;
+  const percentage = (loaded / total) * 100;
+
+  // Update the width of the progress bar
+  progressBar.style.width = `${percentage}%`;
+}
+
 async function initialLoad() {
+  // Reset progress bar width
+  progressBar.style.width = '0%';
+
   // version that uses fetch
   // fetch("https://api.thecatapi.com/v1/breeds", requestOptions)
   // .then(response => response.text())
   // .then(result => {
   // const breeds = JSON.parse(result); 
-  axios("https://api.thecatapi.com/v1/breeds", requestOptions)
-    .then(response => response.data)
-    .then(breeds => {
+  axios("https://api.thecatapi.com/v1/breeds", {
+    ...requestOptions,
+    onDownloadProgress: updateProgress
+  })
+  .then(response => {
+    const breeds = response.data;
     breeds.forEach((breed) => {
       breedSelect.options.add(new Option(breed['name'], breed['id']));
     });
@@ -48,15 +66,23 @@ async function initialLoad() {
   breedSelect.addEventListener("change", function(event) {
     const breed = event.target.value;
 
+    // Reset the progress bar for the next request
+    progressBar.style.width = '0%';
+
     // Retrieve information on the selected breed from the cat API using fetch().
     // version that uses fetch
     // fetch("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
     // .then(response => response.text())
     // .then(result => {
-    //       const descriptions = JSON.parse(result);
-    axios("https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=" + breed, requestOptions)
+    // const descriptions = JSON.parse(result);
+
+    // Fetch images for the selected breed
+    axios(`https://api.thecatapi.com/v1/images/search?limit=100&breed_ids=${breed}`, {...requestOptions,
+      onDownloadProgress: updateProgress
+    })
     .then(response => {
       const descriptions = response.data;
+      Carousel.clear();
       
       // Make sure your request is receiving multiple array items!
 
@@ -75,7 +101,10 @@ async function initialLoad() {
       });
       Carousel.start();
            // Fetch breed details for the selected breed
-           return axios(`https://api.thecatapi.com/v1/breeds/${breed}`, requestOptions);
+           return axios(`https://api.thecatapi.com/v1/breeds/${breed}`, 
+            {...requestOptions,
+              onDownloadProgress: updateProgress
+            });
           })
           .then(response => {
             const breedInfo = response.data;
