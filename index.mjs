@@ -41,6 +41,14 @@ function updateProgress(progressEvent) {
   progressBar.style.width = `${percentage}%`;
 }
 
+// Axios request interceptor to set the cursor style to "progress", to indicate loading
+axios.interceptors.request.use((config) => {
+  document.body.style.cursor = "progress";
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 async function initialLoad() {
   // Reset progress bar width
   progressBar.style.width = '0%';
