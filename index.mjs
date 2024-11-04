@@ -49,6 +49,15 @@ axios.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Axios response interceptor to reset the cursor style to "default" after the request completes
+axios.interceptors.response.use((response) => {
+  document.body.style.cursor = "default";
+  return response;
+}, (error) => {
+  document.body.style.cursor = "default";
+  return Promise.reject(error);
+});
+
 async function initialLoad() {
   // Reset progress bar width
   progressBar.style.width = '0%';
